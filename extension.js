@@ -115,6 +115,7 @@ function activate( context )
             if( refreshRequired && ( result === undefined || result.length === 0 ) )
             {
                 provider.refresh();
+                provider.prune();
             }
             status.hide();
         } ).catch( ( e ) =>

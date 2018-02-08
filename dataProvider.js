@@ -7,6 +7,19 @@ var elements = [];
 const PATH = "path";
 const TODO = "todo";
 
+String.prototype.hashCode = function()
+{
+    var hash = 0, i, chr;
+    if( this.length === 0 ) return hash;
+    for( i = 0; i < this.length; i++ )
+    {
+        chr = this.charCodeAt( i );
+        hash = ( ( hash << 5 ) - hash ) + chr;
+        hash |= 0; // Convert to 32bit integer
+    }
+    return hash;
+};
+
 class TodoDataProvider
 {
     constructor( _context )
@@ -25,7 +38,7 @@ class TodoDataProvider
             {
                 return elements;
             }
-            return [ { name: "Nothing found" }];
+            return [ { name: "Nothing found" } ];
         }
         else if( element.type === PATH )
         {
@@ -44,18 +57,32 @@ class TodoDataProvider
         }
     }
 
+    getTodoIcon()
+    {
+        let icon = {
+            dark: this._context.asAbsolutePath( path.join( "resources/icons", "dark", "todo.svg" ) ),
+            light: this._context.asAbsolutePath( path.join( "resources/icons", "light", "todo.svg" ) )
+        };
+        return icon;
+    }
+
     getTreeItem( element )
     {
         let treeItem = new vscode.TreeItem( element.name );
         treeItem.collapsibleState = vscode.TreeItemCollapsibleState.None;
+        treeItem.resourceUri = new vscode.Uri.file( element.file );
 
         if( element.type === PATH )
         {
+            treeItem.id = element.file.hashCode();
             treeItem.collapsibleState = vscode.workspace.getConfiguration( 'todo-tree' ).expanded ?
                 vscode.TreeItemCollapsibleState.Expanded : vscode.TreeItemCollapsibleState.Collapsed;
         }
         else if( element.type === TODO )
         {
+            treeItem.id = ( element.file + element.line ).hashCode();
+            treeItem.iconPath = this.getTodoIcon();
+
             treeItem.command = {
                 command: "todo-tree.revealTodo",
                 title: "",
@@ -69,11 +96,28 @@ class TodoDataProvider
         return treeItem;
     }
 
-    clear()
+    markForRemoval( element )
     {
+        element.canBeDeleted = true;
+        element.elements.map( function( element )
+        {
+            markForRemoval( element );
+        } );
+    }
+
+    refresh()
+    {
+        elements.map( function( element )
+        {
+            markForRemoval( element );
+        } );
         elements = [];
         vscode.commands.executeCommand( 'setContext', 'todo-tree-has-content', false );
         this._onDidChangeTreeData.fire();
+    }
+
+    prune()
+    {
     }
 
     remove( rootFolder, filename )
@@ -156,7 +200,7 @@ class TodoDataProvider
                 var folder = path.dirname( relativePath );
                 var pathLabel = ( folder === "." ) ? "" : " (" + folder + ")";
                 pathElement = {
-                    type: PATH, name: path.basename( fullPath ) + pathLabel, path: relativePath, todos: []
+                    type: PATH, file: fullPath, name: path.basename( fullPath ) + pathLabel, path: relativePath, todos: []
                 };
 
                 elements.push( pathElement );
@@ -174,13 +218,14 @@ class TodoDataProvider
             }
 
             var parent = elements;
-            parts.map( function( p )
+            parts.map( function( p, level )
             {
                 var child = parent.find( findSubPath, p );
                 if( !child )
                 {
+                    var subPath = path.join( rootFolder, parts.slice( 0, level + 1 ).join( path.sep ) );
                     pathElement = {
-                        type: PATH, name: p, parent: pathElement, elements: [], todos: []
+                        type: PATH, file: subPath, name: p, parent: pathElement, elements: [], todos: []
                     };
                     parent.push( pathElement );
                 }

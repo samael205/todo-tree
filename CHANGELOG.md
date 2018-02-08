@@ -1,3 +1,6 @@
+# v0.0.16 - 2018-02-08
+- Add support for file icons from theme
+
 # v0.0.15 - 2018-02-02
 - Fix globs in Windows
 
