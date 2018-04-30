@@ -1,3 +1,6 @@
+# v0.0.34 - 2018-04-30
+- Add expand/collapse buttons
+
 # v0.0.33 - 2018-04-27
 - Allow variable substitution (including ${workspaceFolder}) in todo-tree.rootFolder
 
@@ -15,7 +18,7 @@
 
 # v0.0.29 - 2018-03-16
 - Add support for multiple workspaces
-- Refresh view when configuration is modified
+- Refresh view when configuration is modified # TODO
 
 # v0.0.28 - 2018-03-15
 - Fix sort function

@@ -102,7 +102,7 @@ function activate( context )
             provider.add( rootFolder, match );
         } );
         status.hide();
-        provider.refresh();
+        provider.refresh( true );
     }
 
     function search( rootFolder, options, done )
@@ -228,6 +228,14 @@ function activate( context )
         iterateSearchList( searchList );
     }
 
+    function setButtons()
+    {
+        console.log( "setButtons" );
+        var expanded = vscode.workspace.getConfiguration( 'todo-tree' ).expanded;
+        vscode.commands.executeCommand( 'setContext', 'todo-tree-show-expand', !expanded );
+        vscode.commands.executeCommand( 'setContext', 'todo-tree-show-collapse', expanded );
+    }
+
     function showFlatView()
     {
         vscode.workspace.getConfiguration( 'todo-tree' ).update( 'flat', true, false ).then( function()
@@ -241,6 +249,26 @@ function activate( context )
         vscode.workspace.getConfiguration( 'todo-tree' ).update( 'flat', false, false ).then( function()
         {
             vscode.commands.executeCommand( 'setContext', 'todo-tree-flat', false );
+        } );
+    }
+
+    function collapse()
+    {
+        vscode.workspace.getConfiguration( 'todo-tree' ).update( 'expanded', false, false ).then( function()
+        {
+            provider.clear();
+            addToTree( getRootFolder() );
+            setButtons();
+        } );
+    }
+
+    function expand()
+    {
+        vscode.workspace.getConfiguration( 'todo-tree' ).update( 'expanded', true, false ).then( function()
+        {
+            provider.clear();
+            addToTree( getRootFolder() );
+            setButtons();
         } );
     }
 
@@ -271,6 +299,8 @@ function activate( context )
         context.subscriptions.push( vscode.commands.registerCommand( 'todo-tree.refresh', rebuild ) );
         context.subscriptions.push( vscode.commands.registerCommand( 'todo-tree.showFlatView', showFlatView ) );
         context.subscriptions.push( vscode.commands.registerCommand( 'todo-tree.showTreeView', showTreeView ) );
+        context.subscriptions.push( vscode.commands.registerCommand( 'todo-tree.expand', expand ) );
+        context.subscriptions.push( vscode.commands.registerCommand( 'todo-tree.collapse', collapse ) );
 
         vscode.window.onDidChangeActiveTextEditor( function( e )
         {
@@ -317,12 +347,14 @@ function activate( context )
             {
                 provider.clear();
                 addToTree( getRootFolder() );
+                setButtons();
             }
         } ) );
 
         var flat = vscode.workspace.getConfiguration( 'todo-tree' ).flat;
         vscode.commands.executeCommand( 'setContext', 'todo-tree-flat', flat );
 
+        setButtons();
         rebuild();
     }
 
