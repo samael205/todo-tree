@@ -259,6 +259,7 @@ function activate( context )
         vscode.workspace.getConfiguration( 'todo-tree' ).update( 'expanded', false, false ).then( function()
         {
             provider.clear();
+            provider.rebuild();
             addToTree( getRootFolder() );
             setButtons();
         } );
@@ -269,6 +270,7 @@ function activate( context )
         vscode.workspace.getConfiguration( 'todo-tree' ).update( 'expanded', true, false ).then( function()
         {
             provider.clear();
+            provider.rebuild();
             addToTree( getRootFolder() );
             setButtons();
         } );
