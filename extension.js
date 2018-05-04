@@ -162,6 +162,8 @@ function activate( context )
             options.filename = filename;
         }
 
+        options.additional = vscode.workspace.getConfiguration( 'todo-tree' ).ripgrepArgs;
+
         return options;
     }
 
