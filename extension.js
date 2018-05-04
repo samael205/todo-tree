@@ -219,6 +219,7 @@ function activate( context )
     function rebuild()
     {
         dataSet = [];
+        console.log( "clear (rebuild)" );
         provider.clear();
 
         status.text = "todo-tree: Scanning " + getRootFolder() + "...";
@@ -258,6 +259,7 @@ function activate( context )
     {
         vscode.workspace.getConfiguration( 'todo-tree' ).update( 'expanded', false, false ).then( function()
         {
+            console.log( "clear(collapse)" );
             provider.clear();
             provider.rebuild();
             addToTree( getRootFolder() );
@@ -269,6 +271,7 @@ function activate( context )
     {
         vscode.workspace.getConfiguration( 'todo-tree' ).update( 'expanded', true, false ).then( function()
         {
+            console.log( "clear(expand)" );
             provider.clear();
             provider.rebuild();
             addToTree( getRootFolder() );
@@ -317,6 +320,7 @@ function activate( context )
                 }
                 else if( workspace.uri.fsPath !== lastRootFolder )
                 {
+                    console.log( "REBUILD 2" );
                     rebuild();
                 }
             }
@@ -324,6 +328,7 @@ function activate( context )
 
         function refreshFile( filename )
         {
+            console.log( "clear(refreshFile)" );
             provider.clear();
             dataSet = dataSet.filter( match =>
             {
@@ -353,6 +358,7 @@ function activate( context )
         {
             if( e.affectsConfiguration( "todo-tree" ) )
             {
+                console.log( "clear(config)" );
                 provider.clear();
                 addToTree( getRootFolder() );
                 setButtons();
@@ -363,6 +369,7 @@ function activate( context )
         vscode.commands.executeCommand( 'setContext', 'todo-tree-flat', flat );
 
         setButtons();
+        console.log( "REBUILD 1" );
         rebuild();
     }
 

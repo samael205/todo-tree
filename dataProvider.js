@@ -151,6 +151,7 @@ class TodoDataProvider
 
         treeItem.id = element.id;
 
+        console.log( "getTreeItem(" + treeItem.id + ")" );
         treeItem.collapsibleState = vscode.TreeItemCollapsibleState.None;
         treeItem.resourceUri = new vscode.Uri.file( element.file );
         treeItem.tooltip = element.file;
