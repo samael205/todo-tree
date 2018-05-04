@@ -309,7 +309,11 @@ function activate( context )
             if( e && e.document )
             {
                 var workspace = vscode.workspace.getWorkspaceFolder( e.document.uri );
-                if( !workspace || workspace.uri.fsPath !== lastRootFolder )
+                if( !workspace )
+                {
+                    refreshFile( e.fileName );
+                }
+                else if( workspace.uri.fsPath !== lastRootFolder )
                 {
                     rebuild();
                 }
