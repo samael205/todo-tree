@@ -11,6 +11,8 @@ var elements = [];
 const PATH = "path";
 const TODO = "todo";
 
+var nextId = 1;
+
 class TodoDataProvider
 {
     constructor( _context, defaultRootFolder )
@@ -121,6 +123,9 @@ class TodoDataProvider
     getTreeItem( element )
     {
         let treeItem = new vscode.TreeItem( element.name + ( element.pathLabel ? element.pathLabel : "" ) );
+
+        treeItem.id = nextId++;
+
         treeItem.collapsibleState = vscode.TreeItemCollapsibleState.None;
         treeItem.resourceUri = new vscode.Uri.file( element.file );
         treeItem.tooltip = element.file;
@@ -231,10 +236,13 @@ class TodoDataProvider
         }
     }
 
-    refresh()
+    refresh( setViewVisibility )
     {
         this._onDidChangeTreeData.fire();
-        vscode.commands.executeCommand( 'setContext', 'todo-tree-has-content', elements.length > 0 );
+        if( setViewVisibility === true )
+        {
+            vscode.commands.executeCommand( 'setContext', 'todo-tree-has-content', elements.length > 0 );
+        }
     }
 }
 exports.TodoDataProvider = TodoDataProvider;

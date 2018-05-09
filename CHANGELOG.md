@@ -1,3 +1,5 @@
+# v0.0.35 - 2018-04-??
+- Add expand/collapse buttons
 
 # v0.0.34 - 2018-05-09
 - Add support for additional ripgrep arguments
@@ -21,7 +23,7 @@
 
 # v0.0.29 - 2018-03-16
 - Add support for multiple workspaces
-- Refresh view when configuration is modified
+- Refresh view when configuration is modified # TODO
 
 # v0.0.28 - 2018-03-15
 - Fix sort function
