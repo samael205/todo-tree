@@ -8,7 +8,7 @@
         "tasklist",
         "multi-root ready"
     ],
-    "version": "0.0.34",
+    "version": "0.0.51",
     "icon": "resources/todo-tree.png",
     "publisher": "Gruntfuggly",
     "engines": {
@@ -23,11 +23,27 @@
     ],
     "main": "./extension",
     "contributes": {
+        "viewsContainers": {
+            "activitybar": [
+                {
+                    "id": "todo-tree-container",
+                    "title": "TODOS CONTAINER",
+                    "icon": "resources/icons/dark/tree.svg"
+                }
+            ]
+        },
         "views": {
             "explorer": [
                 {
+                    "id": "todo-tree-2",
+                    "name": "TODOs 1",
+                    "when": "todo-tree-has-content"
+                }
+            ],
+            "todo-tree-container": [
+                {
                     "id": "todo-tree",
-                    "name": "TODOs",
+                    "name": "TODOs 2",
                     "when": "todo-tree-has-content"
                 }
             ]
